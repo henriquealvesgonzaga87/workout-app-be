@@ -1,3 +1,10 @@
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+packages = [
+    { include = "workout_app_be" }
+]
+
 [project]
 name = "workout-app-be"
 version = "0.1.0"
