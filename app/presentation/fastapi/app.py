@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
-from app.settings import Settings
 from app.infrastructure.containers.user.user_containers import UserContainer
-from app.presentation.routes.user import user_routes
 from app.presentation.error_handlers.error_handler import ErrorHandler
+from app.presentation.error_handlers.integrity_error import IntegrityError
 from app.presentation.error_handlers.reponse_error import ResponseError
 from app.presentation.error_handlers.request_error import RequestError
-from app.presentation.error_handlers.integrity_error import IntegrityError
+from app.presentation.routes.user import user_routes
+from app.settings import Settings
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 
 class App:
@@ -33,11 +33,11 @@ class App:
         @self.app.exception_handler(ResponseError)
         def response_error(request: Request, exc: ResponseError) -> JSONResponse:
             return ErrorHandler.response_error_handler(request=request, exc=exc)
-        
+
         @self.app.exception_handler(RequestError)
         def request_error(request: Request, exc: RequestError) -> JSONResponse:
             return ErrorHandler.request_error_handler(request=request, exc=exc)
-        
+
         @self.app.exception_handler(IntegrityError)
         def integrity_error(request: Request, exc: IntegrityError) -> JSONResponse:
             return ErrorHandler.integrity_error_handler(request=request, exc=exc)

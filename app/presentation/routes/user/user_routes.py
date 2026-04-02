@@ -1,13 +1,15 @@
-from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends, status, Body
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Body, Depends, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 
 from app.infrastructure.containers.user.user_containers import UserContainer
-from app.presentation.mappers.user.mappers import UserMapper
-from app.presentation.models.user.create_user_model import CreateUserRequest, CreateUserResponse
 from app.presentation.error_handlers.request_error import RequestError
-
+from app.presentation.mappers.user.mappers import UserMapper
+from app.presentation.models.user.create_user_model import (
+    CreateUserRequest,
+    CreateUserResponse,
+)
 
 router = APIRouter(
     tags=["user"],
