@@ -42,3 +42,15 @@ def get_all_users(
     users_dto_response = UserMapper.to_web_response(users)
 
     return jsonable_encoder(users_dto_response)
+
+@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=CreateUserResponse)
+@inject
+def get_user_by_id(
+    id: int,
+    get_user_by_id_use_case = Depends(Provide[UserContainer.get_user_by_id_use_case])
+):
+    user = get_user_by_id_use_case.execute(id=id)
+
+    user_dto_response = UserMapper.to_web_response(user)
+
+    return jsonable_encoder(user_dto_response)

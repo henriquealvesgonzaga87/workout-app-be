@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 
 from app.application.user.use_cases.create_user_use_case import CreateUserUseCase
 from app.application.user.use_cases.get_all_users_use_case import GetAllUsersUseCase
+from app.application.user.use_cases.get_user_by_id_use_case import GetUserByIdUseCase
 from app.infrastructure.repositories.dependencies import get_db
 from app.infrastructure.repositories.sqlalchemy.user.user_repo import SQLAlchemyUserRepository
 from app.settings import get_settings
@@ -19,3 +20,4 @@ class UserContainer(containers.DeclarativeContainer):
 
    create_user_use_case = providers.Factory(CreateUserUseCase, user_repository=user_repository)
    get_all_users_use_case = providers.Factory(GetAllUsersUseCase, user_repository=user_repository)
+   get_user_by_id_use_case = providers.Factory(GetUserByIdUseCase, user_repository=user_repository)
