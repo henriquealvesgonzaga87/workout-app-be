@@ -1,17 +1,15 @@
 import sys
-from os.path import abspath, dirname
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from os.path import abspath, dirname
 
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
 # Adiciona o caminho do projeto ao sys.path para que os imports do 'app' funcionem
 sys.path.insert(0, abspath(dirname(dirname(__file__))))
 
-from app.settings import get_settings
 from app.infrastructure.schemas import Base
+from app.settings import get_settings
 
 # este é o objeto de configuração do Alembic
 config = context.config
@@ -40,7 +38,7 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Executa migrações no modo 'online'."""
     settings = get_settings()
-    
+
     # Sobrescreve a URL do sqlalchemy no config do alembic com a vinda do seu .env
     configuration = config.get_section(config.config_ini_section, {})
     configuration["sqlalchemy.url"] = settings.DATABASE_URL

@@ -1,7 +1,10 @@
 from datetime import datetime
 
-from app.presentation.models.user.create_user_model import CreateUserRequest, CreateUserResponse
 from app.application.user.dtos.user_dtos import CreateUserDto, UserOutputDto
+from app.presentation.models.user.create_user_model import (
+    CreateUserRequest,
+    CreateUserResponse,
+)
 
 
 class UserMapper:
@@ -16,7 +19,7 @@ class UserMapper:
             creation_date=datetime.utcnow(),
             update_date=None
         )
-    
+
     @staticmethod
     def to_web_response(user_output_dto: UserOutputDto) -> CreateUserResponse:
         return CreateUserResponse(

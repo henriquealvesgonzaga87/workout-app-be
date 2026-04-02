@@ -26,9 +26,60 @@ dependencies = [
     "passlib (>=1.7.4,<2.0.0)",
     "types-passlib (>=1.7.7.20260211,<2.0.0.0)",
     "argon2-cffi (>=25.1.0,<26.0.0)",
+    "coverage (>=7.13.5,<8.0.0)",
+    "ruff (>=0.15.8,<0.16.0)",
 ]
 
 [dependency-groups]
 dev = [
     "ruff (>=0.15.7,<0.16.0)"
 ]
+
+[tool.ruff]
+# Strict PEP 8 line length limit
+line-length = 119
+
+# Target Python version
+target-version = "py310"
+
+# Files to include/exclude
+extend-exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+# Rule selection:
+# E/W: pycodestyle (PEP 8 style rules)
+# F: Pyflakes (detects unused imports and logic errors)
+# I: isort (import sorting and organization)
+# B: flake8-bugbear (common design flaws)
+select = ["E", "W", "F", "I", "B"]
+
+# Allow Ruff to automatically fix these rules
+fixable = ["ALL"]
+unfixable = []
+
+# Disable specific rules if they conflict with your workflow
+ignore = [
+    "B008",
+    "B017",
+    "B904",
+    "E722",
+    "W291",
+]
+
+[tool.ruff.lint.isort]
+# Sort imports alphabetically and in blocks
+# 1. Standard Library | 2. Third-party | 3. First-party (Your App)
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+combine-as-imports = true
+split-on-trailing-comma = true
+
+# CRITICAL: Replace "my_app" with your actual project folder name
+# This tells Ruff which imports belong to your application
+known-first-party = ["app", "src"]
+
+[tool.ruff.format]
+# Aesthetic formatting (replaces Black)
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

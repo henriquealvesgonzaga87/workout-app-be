@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError as SQLAlchemyIntegrityError
+from sqlalchemy.orm import Session
 
 from app.application.user.interfaces.interfaces import UserInterface
 from app.domain.user.entities import User
