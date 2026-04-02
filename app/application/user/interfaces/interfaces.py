@@ -7,3 +7,7 @@ class UserInterface(ABC):
     @abstractmethod
     def create(self, user: User) -> User:
         pass
+
+    @abstractmethod
+    def get_users(self) -> list[User]:
+        pass

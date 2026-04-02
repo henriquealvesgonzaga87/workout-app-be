@@ -1,10 +1,12 @@
-from sqlalchemy.exc import IntegrityError as SQLAlchemyIntegrityError
+from sqlalchemy.exc import IntegrityError as SQLAlchemyIntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.application.user.interfaces.interfaces import UserInterface
 from app.domain.user.entities import User
 from app.infrastructure.schemas.user.user_schema import UserSchema
+from app.presentation.error_handlers.data_base_error import DataBaseError
 from app.presentation.error_handlers.integrity_error import IntegrityError
+from app.presentation.error_handlers.not_found_error import NotFoundError
 
 
 class SQLAlchemyUserRepository(UserInterface):
@@ -38,5 +40,18 @@ class SQLAlchemyUserRepository(UserInterface):
         except SQLAlchemyIntegrityError as e:
             self.db_session.rollback()
             raise IntegrityError(f"Error to save into DB! Error: {e}")
+        finally:
+            self.db_session.close()
+
+    def get_users(self) -> list[User]:
+        try:
+            users = self.db_session.query(UserSchema).all()
+
+            if len(users) == 0:
+                raise NotFoundError("No result found")
+
+            return users
+        except SQLAlchemyError as e:
+            raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
         finally:
             self.db_session.close()

@@ -28,6 +28,7 @@ dependencies = [
     "argon2-cffi (>=25.1.0,<26.0.0)",
     "coverage (>=7.13.5,<8.0.0)",
     "ruff (>=0.15.8,<0.16.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
 ]
 
 [dependency-groups]
@@ -83,3 +84,21 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+# Replace "app" and "utils" with your actual source folders
+source = ["app", "utils"]
+
+[tool.coverage.report]
+# Shows which lines are missing coverage in the terminal
+show_missing = true
+# Exclude folders that don't need testing
+omit = [
+    "tests/*",
+    ".venv/*",
+    "*/__init__.py",
+]

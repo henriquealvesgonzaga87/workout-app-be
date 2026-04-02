@@ -31,3 +31,14 @@ def create(
         return jsonable_encoder(output_dto_response)
     except RequestValidationError as e:
         raise RequestError(f"Unable to proccess the request {e}")
+
+@router.get("/", status_code=status.HTTP_200_OK, response_model=list[CreateUserResponse])
+@inject
+def get_all_users(
+    get_all_users_case = Depends(Provide[UserContainer.get_all_users_use_case])
+):
+    users = get_all_users_case.execute()
+
+    users_dto_response = UserMapper.to_web_response(users)
+
+    return jsonable_encoder(users_dto_response)

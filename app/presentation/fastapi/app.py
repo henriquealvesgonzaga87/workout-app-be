@@ -1,8 +1,10 @@
 from starlette.middleware.cors import CORSMiddleware
 
 from app.infrastructure.containers.user.user_containers import UserContainer
+from app.presentation.error_handlers.data_base_error import DataBaseError
 from app.presentation.error_handlers.error_handler import ErrorHandler
 from app.presentation.error_handlers.integrity_error import IntegrityError
+from app.presentation.error_handlers.not_found_error import NotFoundError
 from app.presentation.error_handlers.reponse_error import ResponseError
 from app.presentation.error_handlers.request_error import RequestError
 from app.presentation.routes.user import user_routes
@@ -41,6 +43,14 @@ class App:
         @self.app.exception_handler(IntegrityError)
         def integrity_error(request: Request, exc: IntegrityError) -> JSONResponse:
             return ErrorHandler.integrity_error_handler(request=request, exc=exc)
+
+        @self.app.exception_handler(DataBaseError)
+        def data_base_error(request: Request, exc: DataBaseError) -> JSONResponse:
+            return ErrorHandler.data_base_error_handler(request=request, exc=exc)
+
+        @self.app.exception_handler(NotFoundError)
+        def not_found_error(request: Request, exc: NotFoundError) -> JSONResponse:
+            return ErrorHandler.not_found_error_handler(request=request, exc=exc)
 
     @classmethod
     def get_app(cls, settings: Settings) -> FastAPI:
