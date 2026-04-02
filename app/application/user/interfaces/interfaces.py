@@ -11,3 +11,7 @@ class UserInterface(ABC):
     @abstractmethod
     def get_users(self) -> list[User]:
         pass
+
+    @abstractmethod
+    def get_by_id(self, id: int) -> User:
+        pass

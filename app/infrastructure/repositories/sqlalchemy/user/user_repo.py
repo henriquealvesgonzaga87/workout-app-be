@@ -55,3 +55,16 @@ class SQLAlchemyUserRepository(UserInterface):
             raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
         finally:
             self.db_session.close()
+
+    def get_by_id(self, id: int) -> User:
+        try:
+            user = self.db_session.query(UserSchema).filter(UserSchema.id==id).first()
+
+            if user is None:
+                raise NotFoundError(f"User with ID {id} not found")
+
+            return user
+        except SQLAlchemyError as e:
+            raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
+        finally:
+            self.db_session.close()
