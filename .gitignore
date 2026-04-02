@@ -2,3 +2,6 @@
 .vscode
 __pycache__
 .mypy_cache
+.env
+app.db
+alembic.md
