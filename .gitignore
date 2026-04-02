@@ -5,3 +5,7 @@ __pycache__
 .env
 app.db
 alembic.md
+.ruff_cache
+*pytest*
+htmlcov
+.coverage
