@@ -9,6 +9,7 @@ from app.presentation.mappers.user.mappers import UserMapper
 from app.presentation.models.user.create_user_model import (
     CreateUserRequest,
     CreateUserResponse,
+    UpdateUserRequest,
 )
 
 router = APIRouter(
@@ -54,3 +55,20 @@ def get_user_by_id(
     user_dto_response = UserMapper.to_web_response(user)
 
     return jsonable_encoder(user_dto_response)
+
+@router.patch("/{id}", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse)
+@inject
+def update(
+    id: int,
+    user_data: UpdateUserRequest = Body(...),
+    update_user_use_case = Depends(Provide[UserContainer.update_user_use_case])
+):
+    input_dto = UserMapper.to_application_dto_update(user_request_data=user_data)
+    update_user = update_user_use_case.execute(
+        id=id,
+        user_dto=input_dto
+    )
+
+    output_dto_response = UserMapper.to_web_response(update_user)
+
+    return jsonable_encoder(output_dto_response)

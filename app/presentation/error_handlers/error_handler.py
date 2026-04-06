@@ -1,6 +1,7 @@
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
+from app.presentation.error_handlers.atribute_error import AttributeError
 from app.presentation.error_handlers.data_base_error import DataBaseError
 from app.presentation.error_handlers.integrity_error import IntegrityError
 from app.presentation.error_handlers.not_found_error import NotFoundError
@@ -41,5 +42,12 @@ class ErrorHandler:
     def not_found_error_handler(request: Request, exc: NotFoundError) -> JSONResponse:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
+            content={"message": str(exc)}
+        )
+
+    @staticmethod
+    def attribute_error_handler(request: Request, exc: AttributeError) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={"message": str(exc)}
         )

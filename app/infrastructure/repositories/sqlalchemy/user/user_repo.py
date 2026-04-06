@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.application.user.interfaces.interfaces import UserInterface
 from app.domain.user.entities import User
 from app.infrastructure.schemas.user.user_schema import UserSchema
+from app.presentation.error_handlers.atribute_error import AttributeError as CustomAttributeError
 from app.presentation.error_handlers.data_base_error import DataBaseError
 from app.presentation.error_handlers.integrity_error import IntegrityError
 from app.presentation.error_handlers.not_found_error import NotFoundError
@@ -68,3 +69,39 @@ class SQLAlchemyUserRepository(UserInterface):
             raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
         finally:
             self.db_session.close()
+
+    def update(self, id: int, user: User) -> User:
+        try:
+            db_user = self.db_session.query(UserSchema).filter(UserSchema.id == id).first()
+
+            if db_user is None:
+                raise NotFoundError(f"User with id {id} not found")
+
+            update_data = user.model_dump(exclude_unset=True, exclude_none=True)
+
+            for key, value in update_data.items():
+                setattr(db_user, key, value)
+
+            self.db_session.commit()
+            self.db_session.refresh(db_user)
+
+            return User(
+                id = db_user.id,
+                name = db_user.name,
+                email = db_user.email,
+                password = db_user.password,
+                is_active = db_user.is_active,
+                is_super_admin = db_user.is_super_admin,
+                creation_date = db_user.creation_date,
+                update_date = db_user.update_date
+            )
+
+        except SQLAlchemyError as e:
+            self.db_session.rollback()
+            raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
+        except AttributeError as e:
+            self.db_session.rollback()
+            raise CustomAttributeError(f"Impossible to proccess due to db issues: {e}")
+        finally:
+            self.db_session.close()
+
