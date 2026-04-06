@@ -72,3 +72,13 @@ def update(
     output_dto_response = UserMapper.to_web_response(update_user)
 
     return jsonable_encoder(output_dto_response)
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@inject
+def delete(
+    id: int,
+    delete_user_use_case = Depends(Provide[UserContainer.delete_user_use_case])
+):
+    delete_user_use_case.execute(id=id)
+
+    return True

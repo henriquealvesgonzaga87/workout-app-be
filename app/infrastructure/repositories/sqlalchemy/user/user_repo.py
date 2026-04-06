@@ -105,3 +105,19 @@ class SQLAlchemyUserRepository(UserInterface):
         finally:
             self.db_session.close()
 
+    def delete(self, id: int) -> bool:
+        try:
+            query_user = self.get_by_id(id=id)
+
+            self.db_session.delete(query_user)
+            self.db_session.commit()
+
+            return True
+        except SQLAlchemyError as e:
+            self.db_session.rollback()
+            raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
+        except AttributeError as e:
+            self.db_session.rollback()
+            raise CustomAttributeError(f"Impossible to proccess due to db issues: {e}")
+        finally:
+            self.db_session.close()

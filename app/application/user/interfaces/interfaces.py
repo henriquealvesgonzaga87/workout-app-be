@@ -19,3 +19,7 @@ class UserInterface(ABC):
     @abstractmethod
     def update(self, id: int, user: User) -> User:
         pass
+
+    @abstractmethod
+    def delete(self, id: int) -> bool:
+        pass
