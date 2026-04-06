@@ -140,7 +140,7 @@ class TestUserMapperUpdateUser:
             email="updated@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$test123",
             is_active=True,
-            creation_date=datetime.now()
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(user_output_dto=output_dto)
 
@@ -181,8 +181,8 @@ class TestUserMapperUpdateUser:
             email="deactivated@example.com",
             password="hash",
             is_active=False,
-            creation_date=datetime.now(),
-            update_date=datetime.now()
+            creation_date=datetime(2026, 4, 1, 10, 0, 0),
+            update_date=datetime(2026, 4, 2, 10, 0, 0)
         )
 
         response = UserMapper.to_web_response(user_output_dto=output_dto)
@@ -222,7 +222,7 @@ class TestUserMapperUpdateUser:
             email=dto.email or "original@example.com",
             password="hashed_password",
             is_active=True,
-            creation_date=datetime.now(),
+            creation_date=datetime(2026, 4, 1, 10, 0, 0),
             update_date=dto.update_date
         )
 

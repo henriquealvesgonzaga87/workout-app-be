@@ -76,7 +76,8 @@ class TestUserMapper:
             name="John Doe",
             email="john@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         response = UserMapper.to_web_response(user_output_dto=output_dto)
@@ -94,7 +95,8 @@ class TestUserMapper:
             name="Inactive User",
             email="inactive@example.com",
             password="hash",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         response = UserMapper.to_web_response(user_output_dto=output_dto)
@@ -119,7 +121,8 @@ class TestUserMapper:
             name=dto.name,
             email=dto.email,
             password="hashed_password",
-            is_active=dto.is_active
+            is_active=dto.is_active,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         # Map to response
@@ -155,7 +158,8 @@ class TestUserMapper:
             name="Test",
             email="test@example.com",
             password="hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         response = UserMapper.to_web_response(user_output_dto=output_dto)

@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from app.application.user.dtos.user_dtos import UserOutputDto
 from app.presentation.mappers.user.mappers import UserMapper
 from app.presentation.models.user.create_user_model import CreateUserResponse
@@ -68,7 +70,8 @@ class TestGetUserByIdMappers:
             name="Active User",
             email="active@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$active123",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(active_user)
 
@@ -82,7 +85,8 @@ class TestGetUserByIdMappers:
             name="Inactive User",
             email="inactive@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$inactive123",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(inactive_user)
 
@@ -96,7 +100,8 @@ class TestGetUserByIdMappers:
             name="João Silva 中文",
             email="unicode@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$unicode123",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(unicode_user)
 
@@ -109,7 +114,8 @@ class TestGetUserByIdMappers:
             name="Special Email User",
             email="first.last+tag@example.co.uk",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$special123",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(special_email_user)
 
@@ -148,7 +154,8 @@ class TestGetUserByIdMappers:
             name=long_name,
             email="longname@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$long123",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         response = UserMapper.to_web_response(long_name_user)
 
@@ -162,14 +169,16 @@ class TestGetUserByIdMappers:
             name="User One",
             email="one@example.com",
             password="$argon2hash1$",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         user2 = UserOutputDto(
             id=2,
             name="User Two",
             email="two@example.com",
             password="$argon2hash2$",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         response1 = UserMapper.to_web_response(user1)

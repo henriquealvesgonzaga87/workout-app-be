@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from app.application.user.dtos.user_dtos import UserOutputDto
 from app.presentation.mappers.user.mappers import UserMapper
@@ -89,14 +90,16 @@ class TestGetAllUsersMappers:
             name="Active",
             email="active@example.com",
             password="hash_active",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         inactive_user = UserOutputDto(
             id=2,
             name="Inactive",
             email="inactive@example.com",
             password="hash_inactive",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         active_response = UserMapper.to_web_response(user_output_dto=active_user)
@@ -122,7 +125,8 @@ class TestGetAllUsersMappers:
             name="José María da Silva",
             email="jose@example.com",
             password="hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         response = UserMapper.to_web_response(user_output_dto=user_dto)

@@ -240,7 +240,7 @@ class TestUpdateUserDto:
             email="test@example.com",
             password="hashed_password",
             is_active=True,
-            creation_date=datetime.now()
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         assert output_dto.id == 1
         assert output_dto.name == "Test User"
@@ -270,6 +270,6 @@ class TestUpdateUserDto:
             email="inactive@example.com",
             password="hashed_password",
             is_active=False,
-            creation_date=datetime.now()
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         assert output_dto.is_active is False
