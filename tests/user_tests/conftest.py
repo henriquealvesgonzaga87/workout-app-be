@@ -1,3 +1,8 @@
+"""
+Root conftest.py - Shared fixtures for all tests.
+All child conftest.py files inherit these fixtures.
+"""
+import logging
 from datetime import datetime
 from unittest.mock import Mock
 
@@ -10,29 +15,66 @@ from app.domain.user.entities import User
 from app.infrastructure.schemas.base import Base
 from app.infrastructure.schemas.user.user_schema import UserSchema
 
+# Suppress SQLAlchemy logging during tests for better performance
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+logging.getLogger('sqlalchemy.pool').setLevel(logging.WARNING)
+
 # ============================================================================
 # DATABASE FIXTURES - In-memory SQLite for testing
 # ============================================================================
 
 @pytest.fixture(scope="function")
 def test_db_engine():
-    """Create an in-memory SQLite database for testing."""
+    """Create an in-memory SQLite database for testing.
+
+    Uses optimized settings for fast test execution:
+    - Disabled synchronous mode for faster writes
+    - No foreign key enforcement (unless needed)
+    - No query logging
+    """
     engine = create_engine(
         "sqlite:///:memory:",
-        connect_args={"check_same_thread": False}
+        connect_args={
+            "check_same_thread": False,
+            "timeout": 5.0,
+        },
+        echo=False,
+        pool_pre_ping=False,  # Disabled - not needed for in-memory DB
     )
+
+    # Enable speed optimizations for SQLite
+    with engine.connect() as conn:
+        conn.exec_driver_sql("PRAGMA synchronous = OFF")
+        conn.exec_driver_sql("PRAGMA journal_mode = MEMORY")
+        conn.exec_driver_sql("PRAGMA foreign_keys = OFF")
+        conn.commit()
+
     Base.metadata.create_all(engine)
     yield engine
+
+    # Quick cleanup
     Base.metadata.drop_all(engine)
+    engine.dispose()
 
 
 @pytest.fixture(scope="function")
 def test_db_session(test_db_engine):
-    """Create a fresh database session for each test."""
-    TestSession = sessionmaker(autocommit=False, autoflush=False, bind=test_db_engine)
+    """Create a fresh database session for each test.
+
+    Fast cleanup via transaction rollback.
+    """
+    connection = test_db_engine.connect()
+    transaction = connection.begin_nested()
+
+    TestSession = sessionmaker(autocommit=False, autoflush=False, bind=connection)
     session = TestSession()
+
     yield session
+
+    # Fast cleanup via rollback instead of delete
     session.close()
+    transaction.rollback()
+    connection.close()
 
 
 # ============================================================================
@@ -113,7 +155,9 @@ def mock_user_output_dto():
         name="Test User",
         email="test@example.com",
         password="$argon2id$v=19$m=65540,t=3,p=4$test$test123",
-        is_active=True
+        is_active=True,
+        creation_date=datetime(2026, 4, 1, 10, 0, 0),
+        update_date=None
     )
 
 
@@ -126,14 +170,18 @@ def mock_user_output_dto_list():
             name="John Doe",
             email="john@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$test123",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0),
+            update_date=None
         ),
         UserOutputDto(
             id=2,
             name="Jane Smith",
             email="jane@example.com",
             password="$argon2id$v=19$m=65540,t=3,p=4$test$test456",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 11, 0, 0),
+            update_date=None
         ),
     ]
 

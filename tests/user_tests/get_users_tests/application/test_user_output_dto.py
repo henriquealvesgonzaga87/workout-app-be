@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from pydantic import ValidationError
 
@@ -22,7 +24,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test User",
                 email="test@example.com",
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_requires_name(self):
@@ -33,7 +36,8 @@ class TestUserOutputDtoForGetUsers:
                 # Missing name
                 email="test@example.com",
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_requires_email(self):
@@ -44,7 +48,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test User",
                 # Missing email
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_requires_password(self):
@@ -55,7 +60,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test User",
                 email="test@example.com",
                 # Missing password
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_requires_is_active(self):
@@ -67,6 +73,7 @@ class TestUserOutputDtoForGetUsers:
                 email="test@example.com",
                 password="hashed_password",
                 # Missing is_active
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_email_validation(self):
@@ -77,7 +84,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test User",
                 email="invalid-email",  # Invalid email
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_valid_email_formats(self):
@@ -94,7 +102,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test User",
                 email=email,
                 password="hashed",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
             assert dto.email == email
 
@@ -105,7 +114,8 @@ class TestUserOutputDtoForGetUsers:
             name="Test",
             email="test@example.com",
             password="hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         dto_inactive = UserOutputDto(
@@ -113,7 +123,8 @@ class TestUserOutputDtoForGetUsers:
             name="Test",
             email="test@example.com",
             password="hash",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         assert dto_active.is_active is True
@@ -154,7 +165,8 @@ class TestUserOutputDtoForGetUsers:
             name="Admin User",
             email="admin@example.com",
             password="admin_hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         assert admin_dto.name == "Admin User"
@@ -167,7 +179,8 @@ class TestUserOutputDtoForGetUsers:
             name="Inactive User",
             email="inactive@example.com",
             password="hash",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         assert inactive_dto.is_active is False
@@ -179,7 +192,8 @@ class TestUserOutputDtoForGetUsers:
             name="Test",
             email="test@example.com",
             password="hash",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         assert isinstance(dto.id, int)
@@ -193,7 +207,8 @@ class TestUserOutputDtoForGetUsers:
                 name="Test",
                 email="test@example.com",
                 password="hash",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
             assert dto.id == id_val
 
@@ -204,7 +219,8 @@ class TestUserOutputDtoForGetUsers:
             name="John Smith",
             email="john.smith@example.com",
             password="long_hashed_password_value",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
 
         assert dto.id == 5

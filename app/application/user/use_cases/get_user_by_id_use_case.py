@@ -30,6 +30,8 @@ class GetUserByIdUseCase:
                 email=user.email,
                 password=user.password,
                 is_active=user.is_active,
+                creation_date=user.creation_date,
+                update_date=user.update_date,
             )
         except ResponseValidationError as e:
             raise ResponseError(f"Unable to respond the request! Error: {e}")

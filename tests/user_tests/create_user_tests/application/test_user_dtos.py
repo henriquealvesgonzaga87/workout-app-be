@@ -105,7 +105,8 @@ class TestUserOutputDto:
                 name="Test User",
                 email="invalid-email",
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_missing_id(self):
@@ -116,7 +117,8 @@ class TestUserOutputDto:
                 name="Test User",
                 email="test@example.com",
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_invalid_email(self):
@@ -127,7 +129,8 @@ class TestUserOutputDto:
                 name="Test User",
                 email="not-an-email",
                 password="hashed_password",
-                is_active=True
+                is_active=True,
+                creation_date=datetime(2026, 4, 1, 10, 0, 0)
             )
 
     def test_user_output_dto_is_active_boolean(self):
@@ -138,7 +141,8 @@ class TestUserOutputDto:
             name="Test User",
             email="test@example.com",
             password="hashed_password",
-            is_active="yes"  # Will be coerced to True
+            is_active="yes",  # Will be coerced to True
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         assert dto.is_active is True
 
@@ -190,7 +194,8 @@ class TestEntityUserDomain:
             name="Admin",
             email="admin@example.com",
             password="hashed",
-            is_active=True
+            is_active=True,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         assert user.is_active is True
 
@@ -201,7 +206,8 @@ class TestEntityUserDomain:
             name="Inactive User",
             email="inactive@example.com",
             password="hashed",
-            is_active=False
+            is_active=False,
+            creation_date=datetime(2026, 4, 1, 10, 0, 0)
         )
         assert user.is_active is False
 
