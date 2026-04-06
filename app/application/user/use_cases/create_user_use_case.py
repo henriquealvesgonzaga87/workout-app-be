@@ -36,6 +36,8 @@ class CreateUserUseCase:
                 email=new_user.email,
                 password=new_user.password,
                 is_active=new_user.is_active,
+                creation_date=new_user.creation_date,
+                update_date=new_user.update_date
             )
         except ValidationError as e:
             raise ResponseError(f"Error to respond the request, but the data was saved on DB! Error: {e}")
