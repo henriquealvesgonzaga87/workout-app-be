@@ -15,3 +15,7 @@ class UserInterface(ABC):
     @abstractmethod
     def get_by_id(self, id: int) -> User:
         pass
+
+    @abstractmethod
+    def update(self, id: int, user: User) -> User:
+        pass
