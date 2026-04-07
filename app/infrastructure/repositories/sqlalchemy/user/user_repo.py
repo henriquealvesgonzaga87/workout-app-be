@@ -70,6 +70,19 @@ class SQLAlchemyUserRepository(UserInterface):
         finally:
             self.db_session.close()
 
+    def get_by_email(self, email: str) -> User:
+        try:
+            user = self.db_session.query(UserSchema).filter(UserSchema.email==email).first()
+
+            if user is None:
+                raise NotFoundError(f"User with email {email} not found")
+
+            return user
+        except SQLAlchemyError as e:
+            raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
+        finally:
+            self.db_session.close()
+
     def update(self, id: int, user: User) -> User:
         try:
             db_user = self.db_session.query(UserSchema).filter(UserSchema.id == id).first()

@@ -1,5 +1,5 @@
 
-from utils.hash import get_password_hash, verify_password
+from app.infrastructure.auth.jwt.password_hasher import get_password_hash, verify_password
 
 
 class TestPasswordHashing:

@@ -13,6 +13,11 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str | None = os.getenv("DATABASE_URL")
 
+    REDIS_HOST: str | None = os.getenv('REDIS_HOST')
+    REDIS_PORT: int | None = int(os.getenv('REDIS_PORT'))
+    REDIS_DB: int | None = int(os.getenv('REDIS_DB'))
+    REDIS_DECODE_RESPONSES: bool = True
+
 
 @lru_cache
 def get_settings():
