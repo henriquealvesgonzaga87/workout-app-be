@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from app.application.user.use_cases.create_user_use_case import CreateUserUseCase
 from app.application.user.use_cases.delete_user_use_case import DeleteUserUseCase
 from app.application.user.use_cases.get_all_users_use_case import GetAllUsersUseCase
+from app.application.user.use_cases.get_user_by_email_use_case import GetUserByEmailUseCase
 from app.application.user.use_cases.get_user_by_id_use_case import GetUserByIdUseCase
 from app.application.user.use_cases.update_user_use_case import UpdateUserUseCase
 from app.infrastructure.repositories.dependencies import get_db
@@ -25,3 +26,4 @@ class UserContainer(containers.DeclarativeContainer):
    get_user_by_id_use_case = providers.Factory(GetUserByIdUseCase, user_repository=user_repository)
    update_user_use_case = providers.Factory(UpdateUserUseCase, user_repository=user_repository)
    delete_user_use_case = providers.Factory(DeleteUserUseCase, user_repository=user_repository)
+   get_user_by_email_use_case = providers.Factory(GetUserByEmailUseCase, user_repository=user_repository)

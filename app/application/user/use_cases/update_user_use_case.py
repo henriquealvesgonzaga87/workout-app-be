@@ -2,9 +2,9 @@ from pydantic_core import ValidationError
 
 from app.application.user.dtos.user_dtos import UpdateUserDto, UserOutputDto
 from app.application.user.interfaces.interfaces import UserInterface
+from app.infrastructure.auth.jwt.password_hasher import get_password_hash
 from app.presentation.error_handlers.reponse_error import ResponseError
 from app.presentation.error_handlers.request_error import RequestError
-from utils.hash import get_password_hash
 
 
 class UpdateUserUseCase:

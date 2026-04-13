@@ -17,6 +17,10 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
+    def get_by_email(self, email: str) -> User:
+        pass
+
+    @abstractmethod
     def update(self, id: int, user: User) -> User:
         pass
 
