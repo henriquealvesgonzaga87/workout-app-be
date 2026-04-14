@@ -18,7 +18,7 @@ class UserMapper:
             email=user_request_data.email,
             password=user_request_data.password,
             is_active=True,
-            is_super_admin=False,
+            is_super_admin=user_request_data.is_super_admin,
             creation_date=datetime.utcnow(),
             update_date=None
         )
@@ -30,7 +30,7 @@ class UserMapper:
             email=user_request_data.email,
             password=user_request_data.password,
             is_active=True,
-            is_super_admin=False,
+            is_super_admin=user_request_data.is_super_admin,
             creation_date=None,
             update_date=datetime.utcnow()
         )

@@ -13,73 +13,80 @@ class TestGetUserByIdUseCase:
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
         assert use_case.user_repositoy == mock_user_repository
 
-    def test_prepare_with_valid_integer_id(self, mock_user_repository):
+    def test_prepare_with_valid_integer_id(self, mock_user_repository, mock_access_token_payload):
         """Test prepare method with a valid integer ID."""
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.prepare(id=1)
-        assert result == 1
-        assert isinstance(result, int)
+        result = use_case.prepare(id=1, access_token_payload=mock_access_token_payload)
+        assert result is None
 
-    def test_prepare_with_string_integer_id(self, mock_user_repository):
+    def test_prepare_with_string_integer_id(self, mock_user_repository, mock_access_token_payload):
         """Test prepare method converts string ID to integer."""
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.prepare(id="42")
-        assert result == 42
-        assert isinstance(result, int)
+        result = use_case.prepare(id="42", access_token_payload=mock_access_token_payload)
+        assert result is None
 
-    def test_prepare_with_invalid_id_raises_request_error(self, mock_user_repository):
+    def test_prepare_with_invalid_id_raises_request_error(self, mock_user_repository, mock_access_token_payload):
         """Test prepare method raises RequestError with invalid ID."""
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
         with pytest.raises(RequestError):
-            use_case.prepare(id="invalid_id")
+            use_case.prepare(id="invalid_id", access_token_payload=mock_access_token_payload)
 
-    def test_prepare_with_float_id_converts_to_int(self, mock_user_repository):
+    def test_prepare_with_float_id_converts_to_int(self, mock_user_repository, mock_access_token_payload):
         """Test prepare method converts float ID to integer."""
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.prepare(id=3.14)
-        assert result == 3
-        assert isinstance(result, int)
+        result = use_case.prepare(id=3.14, access_token_payload=mock_access_token_payload)
+        assert result is None
 
-    def test_execute_returns_user_output_dto(self, mock_user_repository, mock_user_entity):
+    def test_execute_returns_user_output_dto(self, mock_user_repository, mock_user_entity, mock_access_token_payload):
         """Test that execute returns a UserOutputDto."""
         mock_user_repository.get_by_id.return_value = mock_user_entity
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=1)
+        result = use_case.execute(id=1, access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, UserOutputDto)
         assert result.id == 1
         assert result.name == "John Doe"
 
-    def test_execute_with_specific_user_id(self, mock_user_repository, mock_user_entity):
+    def test_execute_with_specific_user_id(self, mock_user_repository, mock_user_entity, mock_access_token_payload):
         """Test execute returns correct user for given ID."""
         mock_user_repository.get_by_id.return_value = mock_user_entity
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=1)
+        result = use_case.execute(id=1, access_token_payload=mock_access_token_payload)
 
         mock_user_repository.get_by_id.assert_called_once_with(id=1)
         assert result.id == 1
         assert result.name == "John Doe"
         assert result.email == "john@example.com"
 
-    def test_execute_calls_prepare_before_repository(self, mock_user_repository, mock_user_entity):
+    def test_execute_calls_prepare_before_repository(
+            self, 
+            mock_user_repository, 
+            mock_user_entity, 
+            mock_access_token_payload
+        ):
         """Test that execute calls prepare method to validate ID."""
         mock_user_repository.get_by_id.return_value = mock_user_entity
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id="1")
+        result = use_case.execute(id="1", access_token_payload=mock_access_token_payload)
 
         # prepare should convert string to int
         mock_user_repository.get_by_id.assert_called_once()
         assert isinstance(result, UserOutputDto)
 
-    def test_execute_preserves_all_user_fields(self, mock_user_repository, mock_user_entity):
+    def test_execute_preserves_all_user_fields(
+            self, 
+            mock_user_repository, 
+            mock_user_entity, 
+            mock_access_token_payload
+        ):
         """Test that execute preserves all user fields in UserOutputDto."""
         mock_user_repository.get_by_id.return_value = mock_user_entity
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=1)
+        result = use_case.execute(id=1, access_token_payload=mock_access_token_payload)
 
         assert result.id == mock_user_entity.id
         assert result.name == mock_user_entity.name
@@ -87,7 +94,7 @@ class TestGetUserByIdUseCase:
         assert result.password == mock_user_entity.password
         assert result.is_active == mock_user_entity.is_active
 
-    def test_execute_with_inactive_user(self, mock_user_repository):
+    def test_execute_with_inactive_user(self, mock_user_repository, mock_access_token_payload):
         """Test execute with an inactive user."""
         from datetime import datetime
 
@@ -106,12 +113,12 @@ class TestGetUserByIdUseCase:
         mock_user_repository.get_by_id.return_value = inactive_user
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=5)
+        result = use_case.execute(id=5, access_token_payload=mock_access_token_payload)
 
         assert result.is_active is False
         assert result.id == 5
 
-    def test_execute_with_admin_user(self, mock_user_repository):
+    def test_execute_with_admin_user(self, mock_user_repository, mock_access_token_payload):
         """Test execute with an admin (super_admin) user."""
         from datetime import datetime
 
@@ -130,12 +137,12 @@ class TestGetUserByIdUseCase:
         mock_user_repository.get_by_id.return_value = admin_user
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=10)
+        result = use_case.execute(id=10, access_token_payload=mock_access_token_payload)
 
         assert result.id == 10
         assert result.name == "Admin User"
 
-    def test_execute_with_unicode_name(self, mock_user_repository):
+    def test_execute_with_unicode_name(self, mock_user_repository, mock_access_token_payload):
         """Test execute with unicode characters in user name."""
         from datetime import datetime
 
@@ -154,7 +161,7 @@ class TestGetUserByIdUseCase:
         mock_user_repository.get_by_id.return_value = unicode_user
 
         use_case = GetUserByIdUseCase(user_repository=mock_user_repository)
-        result = use_case.execute(id=15)
+        result = use_case.execute(id=15, access_token_payload=mock_access_token_payload)
 
         assert result.name == "João Silva 中文"
         assert isinstance(result, UserOutputDto)

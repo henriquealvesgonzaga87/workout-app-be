@@ -23,6 +23,14 @@ def test_client(test_settings):
     """Create test client for FastAPI app."""
     with patch('app.presentation.fastapi.app.UserContainer'):
         app_instance = App(settings=test_settings)
+
+        # Override the login_required dependency for testing
+        from app.presentation.routes.auth.jwt.jwt_dependencies import login_required
+
+        def mock_login_required():
+            return {"id": 1, "role": True}
+
+        app_instance.app.dependency_overrides[login_required] = mock_login_required
         return TestClient(app_instance.app)
 
 

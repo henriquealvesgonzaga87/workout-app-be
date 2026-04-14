@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.presentation.error_handlers.atribute_error import AttributeError
 from app.presentation.error_handlers.bad_request_error import BadRequestError
 from app.presentation.error_handlers.data_base_error import DataBaseError
+from app.presentation.error_handlers.forbidden_error import ForbiddenError
 from app.presentation.error_handlers.integrity_error import IntegrityError
 from app.presentation.error_handlers.not_found_error import NotFoundError
 from app.presentation.error_handlers.reponse_error import ResponseError
@@ -72,5 +73,12 @@ class ErrorHandler:
     def bad_request_error_handler(request: Request, exc: BadRequestError) -> JSONResponse:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(exc)}
+        )
+
+    @staticmethod
+    def forbidden_error_handler(request: Request, exc: ForbiddenError) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
             content={"message": str(exc)}
         )

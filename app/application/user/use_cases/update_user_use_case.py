@@ -1,8 +1,12 @@
+from typing import Any
+
 from pydantic_core import ValidationError
 
+from app.application.auth.jwt.dependencies.verification_dependencies import verify_token_payload_user_id
 from app.application.user.dtos.user_dtos import UpdateUserDto, UserOutputDto
 from app.application.user.interfaces.interfaces import UserInterface
 from app.infrastructure.auth.jwt.password_hasher import get_password_hash
+from app.presentation.error_handlers.forbidden_error import ForbiddenError
 from app.presentation.error_handlers.reponse_error import ResponseError
 from app.presentation.error_handlers.request_error import RequestError
 
@@ -11,8 +15,10 @@ class UpdateUserUseCase:
     def __init__(self, user_repository: UserInterface):
         self.user_repository = user_repository
 
-    def prepare(self, user_dto: UpdateUserDto) -> UpdateUserDto:
+    def prepare(self, id: int, user_dto: UpdateUserDto, access_token_payload: dict[str, Any]) -> UpdateUserDto:
         try:
+            verify_token_payload_user_id(id=id, access_token_payload=access_token_payload)
+
             return UpdateUserDto(
                 name=user_dto.name,
                 email=user_dto.email,
@@ -24,13 +30,19 @@ class UpdateUserUseCase:
             )
         except ValidationError as e:
             raise RequestError(f"Error while processing the request! Bad Request! Error: {e}")
+        except ForbiddenError as e:
+            raise ForbiddenError(f"{str(e)}")
 
-    def execute(self, id: int, user_dto: UpdateUserDto) -> UserOutputDto:
+    def execute(self, id: int, user_dto: UpdateUserDto, access_token_payload: dict[str, Any]) -> UserOutputDto:
         try:
-            user_data = self.prepare(user_dto=user_dto)
+            user_data = self.prepare(
+                id=id,
+                user_dto=user_dto,
+                access_token_payload=access_token_payload    
+            )
             updated_user = self.user_repository.update(
                 id=id,
-                user=user_data
+                user=user_data,
             )
             return UserOutputDto(
                 id=updated_user.id,

@@ -14,29 +14,34 @@ class TestGetAllUsersUseCase:
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
         assert use_case.user_repository == mock_user_repository
 
-    def test_prepare_method_does_nothing(self, mock_user_repository):
+    def test_prepare_method_does_nothing(self, mock_user_repository, mock_access_token_payload):
         """Test that prepare method exists and does nothing."""
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.prepare()
+        result = use_case.prepare(access_token_payload=mock_access_token_payload)
         assert result is None
 
-    def test_execute_returns_list_of_user_output_dtos(self, mock_user_repository, mock_user_entity_list):
+    def test_execute_returns_list_of_user_output_dtos(
+            self, 
+            mock_user_repository, 
+            mock_user_entity_list, 
+            mock_access_token_payload
+        ):
         """Test that execute returns a list of UserOutputDto."""
         mock_user_repository.get_users.return_value = mock_user_entity_list
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, list)
         assert len(result) == 3
         assert all(isinstance(user, UserOutputDto) for user in result)
 
-    def test_execute_with_single_user(self, mock_user_repository, mock_user_entity):
+    def test_execute_with_single_user(self, mock_user_repository, mock_user_entity, mock_access_token_payload):
         """Test execute with a single user from repository."""
         mock_user_repository.get_users.return_value = [mock_user_entity]
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, list)
         assert len(result) == 1
@@ -44,22 +49,27 @@ class TestGetAllUsersUseCase:
         assert result[0].id == 1
         assert result[0].name == "John Doe"
 
-    def test_execute_with_empty_user_list(self, mock_user_repository):
+    def test_execute_with_empty_user_list(self, mock_user_repository, mock_access_token_payload):
         """Test execute with empty user list from repository."""
         mock_user_repository.get_users.return_value = []
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, list)
         assert len(result) == 0
 
-    def test_execute_validates_users_with_dto(self, mock_user_repository, mock_user_entity_list):
+    def test_execute_validates_users_with_dto(
+            self, 
+            mock_user_repository, 
+            mock_user_entity_list, 
+            mock_access_token_payload
+        ):
         """Test that execute validates each user using UserOutputDto."""
         mock_user_repository.get_users.return_value = mock_user_entity_list
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         # Verify each user has all required DTO fields
         for user in result:
@@ -69,7 +79,7 @@ class TestGetAllUsersUseCase:
             assert hasattr(user, 'password')
             assert hasattr(user, 'is_active')
 
-    def test_execute_preserves_user_order(self, mock_user_repository):
+    def test_execute_preserves_user_order(self, mock_user_repository, mock_access_token_payload):
         """Test that execute preserves the order of users from repository."""
         from datetime import datetime
 
@@ -110,24 +120,29 @@ class TestGetAllUsersUseCase:
         mock_user_repository.get_users.return_value = users
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         # Order should be preserved as returned from repository
         assert result[0].id == 3
         assert result[1].id == 1
         assert result[2].id == 2
 
-    def test_execute_calls_repository_get_users(self, mock_user_repository, mock_user_entity_list):
+    def test_execute_calls_repository_get_users(
+            self, 
+            mock_user_repository, 
+            mock_user_entity_list, 
+            mock_access_token_payload
+        ):
         """Test that execute calls repository.get_users()."""
         mock_user_repository.get_users.return_value = mock_user_entity_list
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        use_case.execute()
+        use_case.execute(access_token_payload=mock_access_token_payload)
 
         # Verify repository method was called
         mock_user_repository.get_users.assert_called_once()
 
-    def test_execute_with_validation_error(self, mock_user_repository):
+    def test_execute_with_validation_error(self, mock_user_repository, mock_access_token_payload):
         """Test that validation errors are wrapped in ResponseError."""
         # Return data that can't be validated as UserOutputDto
         mock_user_repository.get_users.return_value = [
@@ -137,14 +152,19 @@ class TestGetAllUsersUseCase:
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
 
         with pytest.raises(ResponseError):
-            use_case.execute()
+            use_case.execute(access_token_payload=mock_access_token_payload)
 
-    def test_execute_returns_correct_user_data(self, mock_user_repository, mock_user_entity_list):
+    def test_execute_returns_correct_user_data(
+            self, 
+            mock_user_repository, 
+            mock_user_entity_list, 
+            mock_access_token_payload
+        ):
         """Test that execute returns users with correct data mapping."""
         mock_user_repository.get_users.return_value = mock_user_entity_list
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         # Verify first user
         assert result[0].name == "John Doe"
@@ -158,7 +178,7 @@ class TestGetAllUsersUseCase:
         # Verify admin user
         assert result[2].name == "Admin User"
 
-    def test_execute_with_inactive_users(self, mock_user_repository):
+    def test_execute_with_inactive_users(self, mock_user_repository, mock_access_token_payload):
         """Test execute handles inactive users correctly."""
         from datetime import datetime
 
@@ -188,7 +208,7 @@ class TestGetAllUsersUseCase:
         mock_user_repository.get_users.return_value = users
 
         use_case = GetAllUsersUseCase(user_repository=mock_user_repository)
-        result = use_case.execute()
+        result = use_case.execute(access_token_payload=mock_access_token_payload)
 
         assert result[0].is_active is True
         assert result[1].is_active is False
