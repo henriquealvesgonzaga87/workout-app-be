@@ -31,6 +31,7 @@ def login_required(
         )
 
         access_token_id: int | None = access_token_payload.get("id")
+        access_token_role: bool = access_token_payload.get("role")
 
         if access_token_id is None:
             raise JWTError(f"{access_token_id} not valid")
@@ -46,7 +47,7 @@ def login_required(
         if refresh_token_id is None:
             raise JWTError(f"{refresh_token_id} not valid")
 
-        if refresh_token_id != access_token_id:
+        if (refresh_token_id != access_token_id) and access_token_role is False:
             raise UnauthorizedError("You don't have authorization for this operation!")
 
         return access_token_payload

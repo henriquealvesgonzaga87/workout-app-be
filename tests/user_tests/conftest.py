@@ -275,3 +275,34 @@ def mock_settings():
         PREFIX="/api/v1",
         DATABASE_URL="sqlite:///:memory:"
     )
+
+
+# ============================================================================
+# AUTH & TOKEN FIXTURES
+# ============================================================================
+
+@pytest.fixture
+def mock_access_token_payload_admin():
+    """Create a mock access token payload for an admin user."""
+    return {
+        "id": 1,
+        "role": True  # is_super_admin
+    }
+
+
+@pytest.fixture
+def mock_access_token_payload_user():
+    """Create a mock access token payload for a regular user."""
+    return {
+        "id": 1,
+        "role": False  # is_super_admin
+    }
+
+
+@pytest.fixture
+def mock_access_token_payload():
+    """Create a mock access token payload (alias for admin)."""
+    return {
+        "id": 1,
+        "role": True  # is_super_admin
+    }

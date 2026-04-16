@@ -7,6 +7,7 @@ from app.presentation.error_handlers.atribute_error import AttributeError
 from app.presentation.error_handlers.bad_request_error import BadRequestError
 from app.presentation.error_handlers.data_base_error import DataBaseError
 from app.presentation.error_handlers.error_handler import ErrorHandler
+from app.presentation.error_handlers.forbidden_error import ForbiddenError
 from app.presentation.error_handlers.integrity_error import IntegrityError
 from app.presentation.error_handlers.not_found_error import NotFoundError
 from app.presentation.error_handlers.reponse_error import ResponseError
@@ -79,6 +80,10 @@ class App:
         @self.app.exception_handler(BadRequestError)
         def bad_request_error(request: Request, exc: BadRequestError) -> JSONResponse:
             return ErrorHandler.bad_request_error_handler(request=request, exc=exc)
+
+        @self.app.exception_handler(ForbiddenError)
+        def forbidden_error(request: Request, exc: ForbiddenError) -> JSONResponse:
+            return ErrorHandler.forbidden_error_handler(request=request, exc=exc)
 
     @classmethod
     def get_app(cls, settings: Settings) -> FastAPI:

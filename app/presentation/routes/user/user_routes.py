@@ -1,3 +1,5 @@
+from typing import Any
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.encoders import jsonable_encoder
@@ -11,6 +13,7 @@ from app.presentation.models.user.create_user_model import (
     CreateUserResponse,
     UpdateUserRequest,
 )
+from app.presentation.routes.auth.jwt.jwt_dependencies import login_required
 
 router = APIRouter(
     tags=["user"],
@@ -36,9 +39,10 @@ def create(
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[CreateUserResponse])
 @inject
 def get_all_users(
-    get_all_users_case = Depends(Provide[UserContainer.get_all_users_use_case])
+    get_all_users_case = Depends(Provide[UserContainer.get_all_users_use_case]),
+    access_token_payload: dict[str, Any] = Depends(login_required),
 ):
-    users = get_all_users_case.execute()
+    users = get_all_users_case.execute(access_token_payload=access_token_payload)
 
     users_dto_response = UserMapper.to_web_response(users)
 
@@ -48,9 +52,10 @@ def get_all_users(
 @inject
 def get_user_by_id(
     id: int,
-    get_user_by_id_use_case = Depends(Provide[UserContainer.get_user_by_id_use_case])
+    get_user_by_id_use_case = Depends(Provide[UserContainer.get_user_by_id_use_case]),
+    access_token_payload: dict[str, Any] = Depends(login_required),
 ):
-    user = get_user_by_id_use_case.execute(id=id)
+    user = get_user_by_id_use_case.execute(id=id, access_token_payload=access_token_payload)
 
     user_dto_response = UserMapper.to_web_response(user)
 
@@ -61,12 +66,14 @@ def get_user_by_id(
 def update(
     id: int,
     user_data: UpdateUserRequest = Body(...),
+    access_token_payload: dict[str, Any] = Depends(login_required),
     update_user_use_case = Depends(Provide[UserContainer.update_user_use_case])
 ):
     input_dto = UserMapper.to_application_dto_update(user_request_data=user_data)
     update_user = update_user_use_case.execute(
         id=id,
-        user_dto=input_dto
+        user_dto=input_dto,
+        access_token_payload=access_token_payload
     )
 
     output_dto_response = UserMapper.to_web_response(update_user)
@@ -77,8 +84,9 @@ def update(
 @inject
 def delete(
     id: int,
-    delete_user_use_case = Depends(Provide[UserContainer.delete_user_use_case])
+    delete_user_use_case = Depends(Provide[UserContainer.delete_user_use_case]),
+    access_token_payload: dict[str, Any] = Depends(login_required),
 ):
-    delete_user_use_case.execute(id=id)
+    delete_user_use_case.execute(id=id, access_token_payload=access_token_payload)
 
     return True

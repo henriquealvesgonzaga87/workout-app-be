@@ -23,11 +23,19 @@ def test_settings():
 
 
 @pytest.fixture
-def test_client(test_settings, monkeypatch):
+def test_client(test_settings):
     """Create test client for FastAPI app."""
     # Mock the UserContainer to avoid database setup
     with patch('app.presentation.fastapi.app.UserContainer'):
         app_instance = App(settings=test_settings)
+
+        # Override the login_required dependency for testing
+        from app.presentation.routes.auth.jwt.jwt_dependencies import login_required
+
+        def mock_login_required():
+            return {"id": 1, "role": True}
+
+        app_instance.app.dependency_overrides[login_required] = mock_login_required
         return TestClient(app_instance.app)
 
 
@@ -174,21 +182,24 @@ class TestGetUserByIdRouteErrors:
         response = test_client.get("/api/v1/user/-1")
 
         # May accept or reject depending on validation
-        assert response.status_code in [200, 400, 404, 422, 500]
+        # 403 when token user_id doesn't match requested user_id
+        assert response.status_code in [200, 400, 403, 404, 422, 500]
 
     def test_get_user_by_id_with_zero_id(self, test_client):
         """Test get_user_by_id with zero ID."""
         response = test_client.get("/api/v1/user/0")
 
         # May accept or reject
-        assert response.status_code in [200, 400, 404, 422, 500]
+        # 403 when token user_id doesn't match requested user_id
+        assert response.status_code in [200, 400, 403, 404, 422, 500]
 
     def test_get_user_by_id_with_very_large_id(self, test_client):
         """Test get_user_by_id with very large ID."""
         response = test_client.get("/api/v1/user/999999999999999999")
 
         # Should handle large number
-        assert response.status_code in [200, 404, 422, 500]
+        # 403 when token user_id doesn't match requested user_id
+        assert response.status_code in [200, 403, 404, 422, 500]
 
 
 class TestUpdateUserRouteErrors:
@@ -212,7 +223,8 @@ class TestUpdateUserRouteErrors:
         )
 
         # May accept or reject
-        assert response.status_code in [200, 400, 404, 422, 500, 201]
+        # 403 when token user_id doesn't match requested user_id
+        assert response.status_code in [200, 400, 403, 404, 422, 500, 201]
 
     def test_update_user_with_invalid_json_body(self, test_client):
         """Test update user with invalid JSON body."""

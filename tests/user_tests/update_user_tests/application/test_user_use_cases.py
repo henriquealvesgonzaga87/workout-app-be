@@ -18,7 +18,7 @@ class TestUpdateUserUseCase:
         use_case = UpdateUserUseCase(user_repository=mock_user_repository)
         assert use_case.user_repository == mock_user_repository
 
-    def test_prepare_method_hashes_password(self):
+    def test_prepare_method_hashes_password(self, mock_access_token_payload):
         """Test that prepare method hashes the password when provided."""
         mock_repo = Mock()
         use_case = UpdateUserUseCase(user_repository=mock_repo)
@@ -34,7 +34,7 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        prepared_dto = use_case.prepare(user_dto=update_dto)
+        prepared_dto = use_case.prepare(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         # Password should be hashed and different from original
         assert prepared_dto.password != update_dto.password
@@ -43,7 +43,7 @@ class TestUpdateUserUseCase:
         assert prepared_dto.name == update_dto.name
         assert prepared_dto.email == update_dto.email
 
-    def test_prepare_method_preserves_none_password(self):
+    def test_prepare_method_preserves_none_password(self, mock_access_token_payload):
         """Test that prepare method preserves None password without hashing."""
         mock_repo = Mock()
         use_case = UpdateUserUseCase(user_repository=mock_repo)
@@ -59,13 +59,13 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        prepared_dto = use_case.prepare(user_dto=update_dto)
+        prepared_dto = use_case.prepare(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         # Password should remain None
         assert prepared_dto.password is None
         assert prepared_dto.name == update_dto.name
 
-    def test_prepare_method_preserves_user_data(self):
+    def test_prepare_method_preserves_user_data(self, mock_access_token_payload):
         """Test that prepare method preserves all other user data."""
         mock_repo = Mock()
         use_case = UpdateUserUseCase(user_repository=mock_repo)
@@ -81,7 +81,7 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        prepared_dto = use_case.prepare(user_dto=update_dto)
+        prepared_dto = use_case.prepare(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert prepared_dto.name == update_dto.name
         assert prepared_dto.email == update_dto.email
@@ -89,7 +89,7 @@ class TestUpdateUserUseCase:
         assert prepared_dto.is_super_admin == update_dto.is_super_admin
         assert prepared_dto.update_date == update_dto.update_date
 
-    def test_execute_updates_user_successfully(self, mock_user_repository):
+    def test_execute_updates_user_successfully(self, mock_user_repository, mock_access_token_payload):
         """Test successful user update."""
         # Create the user to be updated
         updated_user = User(
@@ -117,7 +117,7 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        result = use_case.execute(id=1, user_dto=update_dto)
+        result = use_case.execute(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, UserOutputDto)
         assert result.name == "Updated User"
@@ -125,7 +125,7 @@ class TestUpdateUserUseCase:
         assert result.id == 1
         mock_user_repository.update.assert_called_once()
 
-    def test_execute_returns_user_output_dto(self, mock_user_repository):
+    def test_execute_returns_user_output_dto(self, mock_user_repository, mock_access_token_payload):
         """Test that execute returns UserOutputDto with correct data."""
         updated_user = User(
             id=42,
@@ -152,14 +152,14 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        result = use_case.execute(id=42, user_dto=update_dto)
+        result = use_case.execute(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, UserOutputDto)
         assert result.id == 42
         assert result.name == "Updated Name"
         assert result.email == "newemail@example.com"
 
-    def test_execute_with_partial_update(self, mock_user_repository):
+    def test_execute_with_partial_update(self, mock_user_repository, mock_access_token_payload):
         """Test updating user with only some fields."""
         updated_user = User(
             id=5,
@@ -187,13 +187,13 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        result = use_case.execute(id=5, user_dto=update_dto)
+        result = use_case.execute(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert isinstance(result, UserOutputDto)
         assert result.email == "newemail@example.com"
         mock_user_repository.update.assert_called_once()
 
-    def test_execute_calls_repository_with_correct_id(self, mock_user_repository):
+    def test_execute_calls_repository_with_correct_id(self, mock_user_repository, mock_access_token_payload):
         """Test that execute calls repository with the correct user ID."""
         updated_user = User(
             id=99,
@@ -220,13 +220,13 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        use_case.execute(id=99, user_dto=update_dto)
+        use_case.execute(id=1, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         # Verify repository was called with correct ID
         call_args = mock_user_repository.update.call_args
-        assert call_args[1]['id'] == 99
+        assert call_args[1]['id'] == 1
 
-    def test_execute_toggles_is_active(self, mock_user_repository):
+    def test_execute_toggles_is_active(self, mock_user_repository, mock_access_token_payload):
         """Test updating user's is_active status."""
         updated_user = User(
             id=10,
@@ -253,11 +253,11 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        result = use_case.execute(id=10, user_dto=update_dto)
+        result = use_case.execute(id=10, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert result.is_active is False
 
-    def test_execute_toggles_is_super_admin(self, mock_user_repository):
+    def test_execute_toggles_is_super_admin(self, mock_user_repository, mock_access_token_payload):
         """Test updating user's is_super_admin status."""
         # Note: is_super_admin is not included in UserOutputDto, so we can't check it in the output
         # But we can verify it's passed to the repository
@@ -286,7 +286,7 @@ class TestUpdateUserUseCase:
             update_date=now
         )
 
-        use_case.execute(id=11, user_dto=update_dto)
+        use_case.execute(id=11, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         # Verify the call was made with correct is_super_admin flag
         call_args = mock_user_repository.update.call_args
@@ -306,7 +306,7 @@ class TestUpdateUserUseCase:
                 update_date=datetime.now()
             )
 
-    def test_execute_with_validation_error_in_repository(self, mock_user_repository):
+    def test_execute_with_validation_error_in_repository(self, mock_user_repository, mock_access_token_payload):
         """Test that validation error from repository is wrapped in ResponseError."""
         mock_user_repository.update.side_effect = ValidationError.from_exception_data("test", [])
 
@@ -324,9 +324,9 @@ class TestUpdateUserUseCase:
         )
 
         with pytest.raises(ResponseError):
-            use_case.execute(id=1, user_dto=valid_dto)
+            use_case.execute(id=1, user_dto=valid_dto, access_token_payload=mock_access_token_payload)
 
-    def test_execute_preserves_all_fields_in_output(self, mock_user_repository):
+    def test_execute_preserves_all_fields_in_output(self, mock_user_repository, mock_access_token_payload):
         """Test that all fields are preserved in the output."""
         creation_date = datetime(2026, 1, 1, 10, 0, 0)
         update_date = datetime(2026, 2, 1, 15, 30, 0)
@@ -355,7 +355,7 @@ class TestUpdateUserUseCase:
             update_date=update_date
         )
 
-        result = use_case.execute(id=123, user_dto=update_dto)
+        result = use_case.execute(id=123, user_dto=update_dto, access_token_payload=mock_access_token_payload)
 
         assert result.id == 123
         assert result.name == "Complete User"
@@ -364,7 +364,7 @@ class TestUpdateUserUseCase:
         assert result.creation_date == creation_date
         assert result.update_date == update_date
 
-    def test_execute_multiple_updates_on_same_user(self, mock_user_repository):
+    def test_execute_multiple_updates_on_same_user(self, mock_user_repository, mock_access_token_payload):
         """Test updating the same user multiple times."""
         # First update: change name
         user_after_first_update = User(
@@ -404,7 +404,7 @@ class TestUpdateUserUseCase:
             creation_date=None,
             update_date=datetime.now()
         )
-        result1 = use_case.execute(id=50, user_dto=first_dto)
+        result1 = use_case.execute(id=1, user_dto=first_dto, access_token_payload=mock_access_token_payload)
         assert result1.name == "First Update"
 
         # Second update
@@ -417,6 +417,6 @@ class TestUpdateUserUseCase:
             creation_date=None,
             update_date=datetime.now()
         )
-        result2 = use_case.execute(id=50, user_dto=second_dto)
+        result2 = use_case.execute(id=1, user_dto=second_dto, access_token_payload=mock_access_token_payload)
         assert result2.email == "second@example.com"
         assert mock_user_repository.update.call_count == 2

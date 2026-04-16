@@ -19,7 +19,7 @@ class UpdateUserDto(BaseModel):
     email: Optional[EmailStr | None] = None
     password: Optional[str | None] = None
     is_active: bool = True
-    is_super_admin: bool = False
+    is_super_admin: Optional[bool | None] = None
     creation_date: Optional[datetime | None] = None
     update_date: datetime
 
