@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi.exceptions import ResponseValidationError
 
-from app.application.auth.jwt.dependencies.verification_dependencies import verify_token_payload_user_role
+from app.application.auth.jwt.dependencies.verification_dependencies import verify_token_payload_user_id
 from app.application.user.interfaces.interfaces import UserInterface
 from app.presentation.error_handlers.forbidden_error import ForbiddenError
 from app.presentation.error_handlers.reponse_error import ResponseError
@@ -18,7 +18,10 @@ class DeleteUserUseCase:
             if not isinstance(id, int):
                 id = int(id)
 
-            verify_token_payload_user_role(access_token_payload=access_token_payload)
+            verify_token_payload_user_id(
+                id=id,
+                access_token_payload=access_token_payload
+            )
 
             return id
         except (TypeError, ValueError):

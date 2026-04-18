@@ -15,6 +15,7 @@ class UpdateUserRequest(BaseModel):
     name: Optional[str | None] = None
     email: Optional[EmailStr | None] = None
     password: Optional[str | None] = None
+    is_active: Optional[bool | None] = None
     is_super_admin: Optional[bool | None] = None
 
 
