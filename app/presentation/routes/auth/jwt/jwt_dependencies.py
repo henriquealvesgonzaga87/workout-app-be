@@ -6,6 +6,7 @@ from fastapi import Depends, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import ExpiredSignatureError, JWTError, jwt
 
+from app.presentation.error_handlers.not_found_error import NotFoundError
 from app.presentation.error_handlers.unauthorized_error import UnauthorizedError
 
 load_dotenv()
@@ -31,7 +32,8 @@ def login_required(
         )
 
         access_token_id: int | None = access_token_payload.get("id")
-        access_token_role: bool = access_token_payload.get("role")
+        access_token_role: bool | None = access_token_payload.get("role")
+        access_token_user_state: bool | None = access_token_payload.get("is_active")
 
         if access_token_id is None:
             raise JWTError(f"{access_token_id} not valid")
@@ -43,6 +45,10 @@ def login_required(
         )
 
         refresh_token_id: int | None = refresh_token_payload.get("id")
+        refresh_token_user_state: bool | None = access_token_payload.get("is_active")
+
+        if access_token_user_state is False or refresh_token_user_state is False:
+            raise NotFoundError("User not registered. Please register and then login")
 
         if refresh_token_id is None:
             raise JWTError(f"{refresh_token_id} not valid")

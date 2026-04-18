@@ -25,7 +25,7 @@ class TestUserMapperUpdateUser:
         assert dto.name == request.name
         assert dto.email == request.email
         assert dto.password == request.password
-        assert dto.is_active is True
+        assert dto.is_active is None
         assert dto.is_super_admin is None  # Default is None, not False
 
     def test_to_application_dto_update_with_none_values(self):
@@ -42,7 +42,7 @@ class TestUserMapperUpdateUser:
         assert dto.name is None
         assert dto.email == "new@example.com"
         assert dto.password is None
-        assert dto.is_active is True
+        assert dto.is_active is None
 
     def test_to_application_dto_update_sets_update_date(self):
         """Test that to_application_dto_update sets update_date."""
@@ -69,7 +69,7 @@ class TestUserMapperUpdateUser:
         dto = UserMapper.to_application_dto_update(user_request_data=request)
 
         # Default values should be set
-        assert dto.is_active is True
+        assert dto.is_active is None
         assert dto.is_super_admin is None  # Default is None, not False
         assert dto.creation_date is None
         assert dto.update_date is not None
@@ -129,7 +129,7 @@ class TestUserMapperUpdateUser:
         assert dto.name is None
         assert dto.email is None
         assert dto.password is None
-        assert dto.is_active is True
+        assert dto.is_active is None
         assert dto.is_super_admin is None  # Default is None, not False
 
     def test_to_web_response_conversion_with_updated_user(self):

@@ -29,7 +29,7 @@ class UserMapper:
             name=user_request_data.name,
             email=user_request_data.email,
             password=user_request_data.password,
-            is_active=True,
+            is_active=user_request_data.is_active,
             is_super_admin=user_request_data.is_super_admin,
             creation_date=None,
             update_date=datetime.utcnow()

@@ -39,8 +39,16 @@ class JwtHandler:
     def login(self, login_data: JwtLoginDto):
         user = self.user_repository.get_by_email(email=login_data.email)
 
-        access_token = self._create_access_token({"id": user.id, "role": user.is_super_admin})
-        refresh_token = self._create_refresh_token({"id": user.id, "role": user.is_super_admin})
+        access_token = self._create_access_token({
+            "id": user.id, 
+            "role": user.is_super_admin,
+            "is_active": user.is_active,
+        })
+        refresh_token = self._create_refresh_token({
+            "id": user.id, 
+            "role": user.is_super_admin,
+            "is_active": user.is_active,
+        })
         return JwtTokenSchemaOutputDto(
             access_token=access_token, 
             refresh_token=refresh_token
