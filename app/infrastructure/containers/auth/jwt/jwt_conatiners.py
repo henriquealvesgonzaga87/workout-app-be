@@ -4,7 +4,7 @@ from app.application.auth.jwt.use_cases.jwt_login_use_case import JwtLoginUseCas
 from app.application.auth.jwt.use_cases.jwt_referesh_token_use_case import JwtRefreshTokenUseCases
 from app.infrastructure.auth.jwt.jwt_handler import JwtHandler
 from app.infrastructure.db.redis.redis_client import RedisClient
-from app.infrastructure.repositories.dependencies import get_db
+from app.infrastructure.db.sqlite.dependencies import get_db
 from app.infrastructure.repositories.redis.auth.redis_auth_repository import RedisAuthRepository
 from app.infrastructure.repositories.sqlalchemy.user.user_repo import SQLAlchemyUserRepository
 from app.settings import get_settings

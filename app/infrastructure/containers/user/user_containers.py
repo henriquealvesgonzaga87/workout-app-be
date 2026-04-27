@@ -6,7 +6,7 @@ from app.application.user.use_cases.get_all_users_use_case import GetAllUsersUse
 from app.application.user.use_cases.get_user_by_email_use_case import GetUserByEmailUseCase
 from app.application.user.use_cases.get_user_by_id_use_case import GetUserByIdUseCase
 from app.application.user.use_cases.update_user_use_case import UpdateUserUseCase
-from app.infrastructure.repositories.dependencies import get_db
+from app.infrastructure.db.sqlite.dependencies import get_db
 from app.infrastructure.repositories.sqlalchemy.user.user_repo import SQLAlchemyUserRepository
 from app.settings import get_settings
 
