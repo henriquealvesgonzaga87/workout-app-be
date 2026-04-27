@@ -41,8 +41,6 @@ class SQLAlchemyUserRepository(UserInterface):
         except SQLAlchemyIntegrityError as e:
             self.db_session.rollback()
             raise IntegrityError(f"Error to save into DB! Error: {e}")
-        finally:
-            self.db_session.close()
 
     def get_users(self) -> list[User]:
         try:
@@ -54,8 +52,6 @@ class SQLAlchemyUserRepository(UserInterface):
             return users
         except SQLAlchemyError as e:
             raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
-        finally:
-            self.db_session.close()
 
     def get_by_id(self, id: int) -> User:
         try:
@@ -67,8 +63,6 @@ class SQLAlchemyUserRepository(UserInterface):
             return user
         except SQLAlchemyError as e:
             raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
-        finally:
-            self.db_session.close()
 
     def get_by_email(self, email: str) -> User:
         try:
@@ -80,8 +74,6 @@ class SQLAlchemyUserRepository(UserInterface):
             return user
         except SQLAlchemyError as e:
             raise DataBaseError(f"Impossible to proccess right now! Error: {e}")
-        finally:
-            self.db_session.close()
 
     def update(self, id: int, user: User) -> User:
         try:
@@ -115,8 +107,6 @@ class SQLAlchemyUserRepository(UserInterface):
         except AttributeError as e:
             self.db_session.rollback()
             raise CustomAttributeError(f"Impossible to proccess due to db issues: {e}")
-        finally:
-            self.db_session.close()
 
     def delete(self, id: int) -> bool:
         try:
@@ -132,5 +122,3 @@ class SQLAlchemyUserRepository(UserInterface):
         except AttributeError as e:
             self.db_session.rollback()
             raise CustomAttributeError(f"Impossible to proccess due to db issues: {e}")
-        finally:
-            self.db_session.close()
